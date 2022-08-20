@@ -15,3 +15,6 @@
 - **style** : 코드 스타일 혹은 포맷 등에 관 한 커밋
 - **refactor** : 코드 리팩토링에 대한 커밋
 - **test** : 테스트 코드 수정에 대한 커밋
+
+# Folder Structure
+![](../../Desktop/Screenshot/Screen Shot 2022-08-13 at 1.59.10 PM.png)
