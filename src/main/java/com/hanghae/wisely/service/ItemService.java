@@ -29,8 +29,8 @@ public class ItemService {
                 .itemDesc(requestDto.getItemDesc())
                 .itemPrice(requestDto.getItemPrice())
                 .itemImgUrl(requestDto.getItemImgUrl())
-                .itemDetailImag1(requestDto.getItemDetailImg1())
-                .itemDetailImag2(requestDto.getItemDetailImg2())
+                .itemDetailImg1(requestDto.getItemDetailImg1())
+                .itemDetailImg2(requestDto.getItemDetailImg2())
                 .category(requestDto.getCategory())
                 .build();
         itemRepository.save(item);
@@ -116,8 +116,8 @@ public class ItemService {
                 .itemReviewCount(item.getReviewList().stream().count())
                 .itemPrice(item.getItemPrice())
                 .itemImgUrl(item.getItemImgUrl())
-                .itemDetailImg1(item.getItemDetailImag1())
-                .itemDetailImg2(item.getItemDetailImag2())
+                .itemDetailImg1(item.getItemDetailImg1())
+                .itemDetailImg2(item.getItemDetailImg2())
                 .build();
 
         return itemDetailResponseDto;

@@ -1,5 +1,7 @@
 package com.hanghae.wisely.controller;
 
+import com.hanghae.wisely.domain.AuthMember;
+import com.hanghae.wisely.domain.Member;
 import com.hanghae.wisely.dto.request.ReviewRequestDto;
 import com.hanghae.wisely.dto.response.ReviewListResponseDto;
 import com.hanghae.wisely.dto.response.ReviewResponseDto;
@@ -7,6 +9,7 @@ import com.hanghae.wisely.dto.response.ReviewUpdateResponseDto;
 import com.hanghae.wisely.service.ReviewService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,9 +19,12 @@ public class ReviewController {
 
     // Review 생성
     @PostMapping("/items/detail/comments/{itemId}")
-    public ResponseEntity<?> createReview(@PathVariable Long itemId, @RequestBody ReviewRequestDto requestDto) {
+    public ResponseEntity<?> createReview(@PathVariable Long itemId,
+                                          @RequestBody ReviewRequestDto requestDto,
+                                          @AuthenticationPrincipal AuthMember authMember) {
+        Member member = authMember.getMember();
 
-        ReviewResponseDto reviewResponseDto = reviewService.createReview(itemId,requestDto);
+        ReviewResponseDto reviewResponseDto = reviewService.createReview(itemId,requestDto,member);
 
         return ResponseEntity.ok(reviewResponseDto);
     }
@@ -36,17 +42,23 @@ public class ReviewController {
     @PutMapping("/items/detail/comments/{itemId}/{commentId}")
     public ResponseEntity<?> updateReview(@PathVariable Long itemId,
                                           @PathVariable Long commentId,
-                                          @RequestBody ReviewRequestDto requestDto) {
+                                          @RequestBody ReviewRequestDto requestDto,
+                                          @AuthenticationPrincipal AuthMember authMember) {
+        Member member = authMember.getMember();
 
-        ReviewUpdateResponseDto reviewUpdateResponseDto = reviewService.updateReview(itemId, commentId, requestDto);
+        ReviewUpdateResponseDto reviewUpdateResponseDto = reviewService.updateReview(itemId, commentId, requestDto, member);
 
         return ResponseEntity.ok(reviewUpdateResponseDto);
     }
 
     //Review 삭제
     @DeleteMapping("/items/detail/comments/{itemId}/{commentId}")
-    public ResponseEntity<?> deleteReview(@PathVariable Long itemId, @PathVariable Long commentId) {
-        reviewService.deleteReview(itemId, commentId);
+    public ResponseEntity<?> deleteReview(@PathVariable Long itemId,
+                                          @PathVariable Long commentId,
+                                          @AuthenticationPrincipal AuthMember authMember) {
+        Member member = authMember.getMember();
+
+        reviewService.deleteReview(itemId, commentId, member);
         return ResponseEntity.ok("success : true");
     }
 }

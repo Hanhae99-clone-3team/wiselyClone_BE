@@ -31,6 +31,10 @@ public class Review extends Timestamped{
     @JoinColumn(name = "item_id", nullable = false)
     private Item item;
 
+    @ManyToOne(fetch = LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
     public void update(ReviewRequestDto requestDto){
         this.comment = requestDto.getComment();
         this.rate = requestDto.getStar();

@@ -9,7 +9,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
@@ -22,7 +21,7 @@ public class MemberService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public void signUp(String email, String name, Long birthday, String password) {
+    public void signUp(String email, String name, String birthday, String password) {
         checkEmailIsDuplicate(email);
         String encodedPassword = passwordEncoder.encode(password);
         Member newMember = Member.of(email, name, birthday, encodedPassword);
@@ -44,8 +43,8 @@ public class MemberService {
 
 
         String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-        String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
-        tokenToHeaders(accessToken, refreshToken, response);
+//        String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+        tokenToHeaders(accessToken, response);
 
     }
 
@@ -56,15 +55,15 @@ public class MemberService {
         }
     }
 
-    public void reIssueAccessToken(String email, HttpServletRequest request, HttpServletResponse response) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new BadRequestException("존재하지 않는 유저입니다."));
-         jwtProvider.checkRefreshToken(email, request.getHeader("RefreshToken"));
-        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-        tokenToHeaders(accessToken, response.getHeader("RefreshToken"), response);
-    }
+//    public void reIssueAccessToken(String email, HttpServletRequest request, HttpServletResponse response) {
+//        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new BadRequestException("존재하지 않는 유저입니다."));
+//         jwtProvider.checkRefreshToken(email, request.getHeader("RefreshToken"));
+//        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+//        tokenToHeaders(accessToken, response.getHeader("RefreshToken"), response);
+//    }
 
-    public void tokenToHeaders(String accessToken, String refreshToken, HttpServletResponse response) {
+    public void tokenToHeaders(String accessToken, HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + accessToken);
-        response.addHeader("RefreshToken", refreshToken);
+//        response.addHeader("RefreshToken", refreshToken);
     }
 }

@@ -14,7 +14,7 @@ public class ReviewGetResponseDto {
     private String comment;
     private String name;
     private String createdAt;
-    private Long age;
+    private String age;
     private boolean ismine;
 
 }

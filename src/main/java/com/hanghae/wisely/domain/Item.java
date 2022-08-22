@@ -19,26 +19,27 @@ public class Item {
     @Column(name = "item_id")
     private Long id;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "itemname", nullable = false, unique = true)
     private String itemName;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "itemdesc",nullable = false, unique = true)
     private String itemDesc;
 
-    @Column(nullable = false)
+    @Column(name = "itemprice",nullable = false)
     private Long itemPrice;
 
-    @Column(nullable = false)
+    @Column(name = "itemimgurl",nullable = false)
     private String itemImgUrl;
 
-    @Column(nullable = false)
-    private String itemDetailImag1;
+    @Column(name = "itemdetailimg1",nullable = false)
+    private String itemDetailImg1;
 
-    @Column(nullable = false)
-    private String itemDetailImag2;
+    @Column(name = "itemdetailimg2",nullable = false)
+    private String itemDetailImg2;
 
     // Category Enum (면도용품, 스킨케어, 두피케어, 영양제, 덴탈케어, 바디케어)
     @Enumerated(EnumType.STRING)
+    @Column(name = "category")
     private Category category;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
