@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
@@ -21,17 +22,17 @@ public class MemberService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public  void signUp(String email, String name, Long birthday, String password) {
+    public void signUp(String email, String name, Long birthday, String password) {
         checkEmailIsDuplicate(email);
         String encodedPassword = passwordEncoder.encode(password);
-        Member newMember = Member.of(email,name,birthday,encodedPassword);
+        Member newMember = Member.of(email, name, birthday, encodedPassword);
         memberRepository.save(newMember);
     }
 
 
     public void checkEmailIsDuplicate(String email) {
         boolean isDuplicate = memberRepository.existsByEmail(email);
-       if(isDuplicate) {
+        if (isDuplicate) {
             throw new BadRequestException("이미 존재하는 회원입니다.");
         }
     }
@@ -42,18 +43,28 @@ public class MemberService {
         checkPassword(password, member.getPassword());
 
 
-       String token = jwtProvider.createToken(member.getEmail(), member.getRole());
-       tokenToHeaders(token,response);
+        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+        String refreshToken = jwtProvider.createRefreshToken(member.getEmail(), member.getRole());
+        tokenToHeaders(accessToken, refreshToken, response);
 
     }
+
     private void checkPassword(String password, String encodedPassword) {
         boolean isSame = passwordEncoder.matches(password, encodedPassword);
-        if(!isSame) {
+        if (!isSame) {
             throw new BadRequestException("아이디 혹은 비밀번호를 확인하세요.");
         }
     }
 
-    public void tokenToHeaders(String token, HttpServletResponse response) {
-        response.addHeader("AccessToken", "Bearer " + token);
+    public void reIssueAccessToken(String email, HttpServletRequest request, HttpServletResponse response) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new BadRequestException("존재하지 않는 유저입니다."));
+         jwtProvider.checkRefreshToken(email, request.getHeader("RefreshToken"));
+        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+        tokenToHeaders(accessToken, response.getHeader("RefreshToken"), response);
+    }
+
+    public void tokenToHeaders(String accessToken, String refreshToken, HttpServletResponse response) {
+        response.addHeader("Authorization", "Bearer " + accessToken);
+        response.addHeader("RefreshToken", refreshToken);
     }
 }
