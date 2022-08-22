@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @Service
@@ -55,8 +56,15 @@ public class MemberService {
         }
     }
 
+    public void reIssueAccessToken(String email, HttpServletRequest request, HttpServletResponse response) {
+        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new BadRequestException("존재하지 않는 유저입니다."));
+         jwtProvider.checkRefreshToken(email, request.getHeader("RefreshToken"));
+        String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
+        tokenToHeaders(accessToken, response.getHeader("RefreshToken"), response);
+    }
+
     public void tokenToHeaders(String accessToken, String refreshToken, HttpServletResponse response) {
-        response.addHeader("AccessToken", "Bearer " + accessToken);
+        response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("RefreshToken", refreshToken);
     }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 @RestController
@@ -39,5 +40,22 @@ public class MemberController {
 
         return new BasicResponseDto("로그인 성공",true);
     }
+
+    @GetMapping("members/re-issue")
+    public BasicResponseDto reIssue(@RequestBody String email, HttpServletRequest request, HttpServletResponse response) {
+        memberService.reIssueAccessToken(email,request, response);
+        return new BasicResponseDto("재발급 성공",true);
+    }
+
+//    @GetMapping("/logout")
+//    public BasicResponseDto logout(@AuthUser Member member, HttpServletRequest request) {
+//        String accessToken = request.getHeader("Authorization").substring(7);
+//        memberService.logout(member.getEmail(), accessToken);
+//        return new new BasicResponseDto("로그아웃 완료", false);
+//
+//    }
+
+
+
 
 }
