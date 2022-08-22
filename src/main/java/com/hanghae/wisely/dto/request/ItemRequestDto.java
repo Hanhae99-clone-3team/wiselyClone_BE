@@ -15,6 +15,7 @@ public class ItemRequestDto {
     private String itemDesc;
     private Long itemPrice;
     private String itemImgUrl;
+    private String itemDetailImg1;
+    private String itemDetailImg2;
     private Category category;
-    private String itemDetailImg;
 }
