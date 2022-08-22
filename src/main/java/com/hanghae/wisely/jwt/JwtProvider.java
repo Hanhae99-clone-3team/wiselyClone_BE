@@ -36,7 +36,7 @@ private final CustomAccountDetailsService customAccountDetailsService;
     }
 
     public String createAccessToken(String userId, String roles) {
-        Long tokenInvalidTime = 1000L * 60 * 3; // 3m
+        Long tokenInvalidTime = 1000L * 60 * 60; // 1h
         return this.createToken(userId, roles, tokenInvalidTime);
     }
 

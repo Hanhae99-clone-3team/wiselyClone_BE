@@ -37,6 +37,7 @@ public class MemberService {
         }
     }
 
+    @Transactional
     public void login(String email, String password, HttpServletResponse response) {
         Member member = memberRepository
                 .findByEmail(email).orElseThrow(() -> new BadRequestException("아이디 혹은 비밀번호를 확인하세요."));
@@ -56,11 +57,18 @@ public class MemberService {
         }
     }
 
-    public void reIssueAccessToken(String email, HttpServletRequest request, HttpServletResponse response) {
-        Member member = memberRepository.findByEmail(email).orElseThrow(() -> new BadRequestException("존재하지 않는 유저입니다."));
-         jwtProvider.checkRefreshToken(email, request.getHeader("RefreshToken"));
+    @Transactional
+    public void reIssueAccessToken(Member member, HttpServletRequest request, HttpServletResponse response) {
+
+
+        memberRepository.findByEmail(member.getEmail()).orElseThrow(() -> new BadRequestException("존재하지 않는 유저입니다."));
+
+
+        jwtProvider.checkRefreshToken(member.getEmail(), request.getHeader("RefreshToken"));
+
         String accessToken = jwtProvider.createAccessToken(member.getEmail(), member.getRole());
-        tokenToHeaders(accessToken, response.getHeader("RefreshToken"), response);
+
+        tokenToHeaders(accessToken, request.getHeader("RefreshToken"), response);
     }
 
     public void tokenToHeaders(String accessToken, String refreshToken, HttpServletResponse response) {

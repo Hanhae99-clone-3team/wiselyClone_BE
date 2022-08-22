@@ -1,12 +1,14 @@
 package com.hanghae.wisely.controller;
 
+import com.hanghae.wisely.domain.AuthMember;
+import com.hanghae.wisely.domain.Member;
 import com.hanghae.wisely.dto.request.EmailCheckRequestDto;
 import com.hanghae.wisely.dto.request.LoginRequestDto;
 import com.hanghae.wisely.dto.request.SignUpRequestDto;
 import com.hanghae.wisely.dto.response.BasicResponseDto;
 import com.hanghae.wisely.service.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -25,7 +27,7 @@ public class MemberController {
         memberService.signUp(signUpRequestDto.getEmail(), signUpRequestDto.getName(), signUpRequestDto.getBirthday(), signUpRequestDto.getPassword());
         return new BasicResponseDto("회원가입 성공",true);
     }
-    @GetMapping("/members/email-check")// 이메일 가입여부 검사
+    @PostMapping("/members/emailcheck")// 이메일 가입여부 검사
     public BasicResponseDto emailcheck(@RequestBody EmailCheckRequestDto emailCheckRequestDto) {
 
         memberService.checkEmailIsDuplicate(emailCheckRequestDto.getEmail());
@@ -41,11 +43,15 @@ public class MemberController {
         return new BasicResponseDto("로그인 성공",true);
     }
 
-    @GetMapping("members/re-issue")
-    public BasicResponseDto reIssue(@RequestBody String email, HttpServletRequest request, HttpServletResponse response) {
-        memberService.reIssueAccessToken(email,request, response);
+    @PostMapping("/members/reissue")
+    public BasicResponseDto reIssue(@AuthenticationPrincipal AuthMember authMember, HttpServletRequest request, HttpServletResponse response) {
+        Member member = authMember.getMember();
+        memberService.reIssueAccessToken(member ,request, response);
         return new BasicResponseDto("재발급 성공",true);
     }
+
+
+
 
 //    @GetMapping("/logout")
 //    public BasicResponseDto logout(@AuthUser Member member, HttpServletRequest request) {
