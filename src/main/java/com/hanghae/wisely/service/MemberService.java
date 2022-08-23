@@ -50,6 +50,11 @@ public class MemberService {
 
     }
 
+    public void logout(String email, String accessToken) {
+        jwtProvider.logout(email, accessToken);
+    }
+
+
     private void checkPassword(String password, String encodedPassword) {
         boolean isSame = passwordEncoder.matches(password, encodedPassword);
         if (!isSame) {
@@ -74,5 +79,6 @@ public class MemberService {
     public void tokenToHeaders(String accessToken, String refreshToken, HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("RefreshToken", refreshToken);
+
     }
 }

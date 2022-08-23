@@ -9,6 +9,7 @@ import com.hanghae.wisely.dto.response.BasicResponseDto;
 import com.hanghae.wisely.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -53,13 +54,14 @@ public class MemberController {
 
 
 
-//    @GetMapping("/logout")
-//    public BasicResponseDto logout(@AuthUser Member member, HttpServletRequest request) {
-//        String accessToken = request.getHeader("Authorization").substring(7);
-//        memberService.logout(member.getEmail(), accessToken);
-//        return new new BasicResponseDto("로그아웃 완료", false);
-//
-//    }
+    @GetMapping("/members/logout") //
+    public BasicResponseDto logout(@AuthenticationPrincipal AuthMember authMember, HttpServletRequest request) {
+        Member member = authMember.getMember();
+        String accessToken = request.getHeader("Authorization").substring(7);
+        memberService.logout(member.getEmail(), accessToken);
+        return new BasicResponseDto("로그아웃 완료", true);
+
+    }
 
 
 
