@@ -20,13 +20,13 @@ public class Member {
     private String name;
 
     @Column(nullable = false)
-    private Long birthday;
+    private String birthday;
     @Column(nullable = false)
     private String password;
 
     private String role;
 
-    private Member(String email, String name,Long birthday, String password) {
+    private Member(String email, String name,String birthday, String password) {
         this.email = email;
         this.name = name;
         this.birthday = birthday;
@@ -34,7 +34,7 @@ public class Member {
         role = "USER";
     }
 
-    public static Member of(String email, String name, Long birthday,String password) {
+    public static Member of(String email, String name, String birthday,String password) {
         return new Member(email, name, birthday,password);
     }
 }

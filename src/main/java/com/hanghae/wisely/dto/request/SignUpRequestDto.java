@@ -13,7 +13,7 @@ public class SignUpRequestDto {
 
     private String name;
 
-    private Long birthday;
+    private String birthday;
 
     private String password;
 
