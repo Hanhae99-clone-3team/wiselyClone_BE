@@ -22,7 +22,7 @@ public class MemberService {
     private final JwtProvider jwtProvider;
 
     @Transactional
-    public void signUp(String email, String name, Long birthday, String password) {
+    public void signUp(String email, String name, String birthday, String password) {
         checkEmailIsDuplicate(email);
         String encodedPassword = passwordEncoder.encode(password);
         Member newMember = Member.of(email, name, birthday, encodedPassword);
@@ -76,7 +76,7 @@ public class MemberService {
         tokenToHeaders(accessToken, request.getHeader("RefreshToken"), response);
     }
 
-    public void tokenToHeaders(String accessToken, String refreshToken, HttpServletResponse response) {
+    public void tokenToHeaders(String accessToken, String refreshToken,HttpServletResponse response) {
         response.addHeader("Authorization", "Bearer " + accessToken);
         response.addHeader("RefreshToken", refreshToken);
 
