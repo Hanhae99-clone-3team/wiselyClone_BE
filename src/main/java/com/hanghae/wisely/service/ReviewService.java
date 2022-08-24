@@ -11,6 +11,8 @@ import com.hanghae.wisely.dto.response.ReviewUpdateResponseDto;
 import com.hanghae.wisely.repository.ItemRepository;
 import com.hanghae.wisely.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,13 +60,14 @@ public class ReviewService {
                 .build();
     }
 
+    // 리뷰 조회
     @Transactional(readOnly = true)
-    public ReviewListResponseDto getReview(Long itemId) {
+    public ReviewListResponseDto getReview(Long itemId, Pageable pageable) {
         Item item = itemRepository.findById(itemId).orElseThrow(
                 () -> new IllegalArgumentException("Item이 존재하지 않습니다.")
         );
 
-        List<Review> reviewList =  reviewRepository.findAllByItem_Id(item.getId());
+        Page<Review> reviewList =  reviewRepository.findAllByItem_Id(item.getId(),pageable);
 
         List<ReviewGetResponseDto> reviewGetResponseDtoList = new ArrayList<>();
 
@@ -75,6 +78,7 @@ public class ReviewService {
                             .comment(review.getComment())
                             .name(review.getMember().getName())
                             .age((birthday(review.getMember().getBirthday()))+ "대")
+                            .commentRate(review.getRate())
                             .createdAt(review.getCreatedAt())
                             .build()
             );
@@ -142,14 +146,8 @@ public class ReviewService {
         return review.orElseThrow(
                 () -> new IllegalArgumentException("잘못된 요청입니다. Item ID : "+ itemId + " Comment ID : " + commentId));}
 
-//    @Transactional
-//    public Member validateMember(HttpServletRequest request) {
-//        if (!jwtProvider.validateToken(request.getHeader("Authorization"))) {
-//            return null;
-//        }
-//        return jwtProvider.getMemberFromAuthentication();
-//    }
 
+    // 생년월일로  나이대 구하기
     public String birthday(String strAge) {
         int basicAge = 0;
 
@@ -181,6 +179,7 @@ public class ReviewService {
         // 다시 한 글자를 Long 타입으로 변환하고 10을 곱해 10, 20, 30, 40 <-- 이런 식으로 반환한다.
         Long simpleAge = Long.parseLong(strBasicAge)*10;
 
+        // 다시 String 으로 형병환 한다.
         String age = String.valueOf(simpleAge);
 
 

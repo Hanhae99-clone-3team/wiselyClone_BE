@@ -8,6 +8,8 @@ import com.hanghae.wisely.dto.response.ReviewResponseDto;
 import com.hanghae.wisely.dto.response.ReviewUpdateResponseDto;
 import com.hanghae.wisely.service.ReviewService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -31,9 +33,9 @@ public class ReviewController {
 
     // Review 조회
     @GetMapping("/items/detail/comments/{itemId}")
-    public ResponseEntity<?> getReview(@PathVariable Long itemId) {
+    public ResponseEntity<?> getReview(@PathVariable Long itemId, @PageableDefault Pageable pageable) {
 
-        ReviewListResponseDto reviewGetResponseDtoList = reviewService.getReview(itemId);
+        ReviewListResponseDto reviewGetResponseDtoList = reviewService.getReview(itemId, pageable);
 
         return ResponseEntity.ok(reviewGetResponseDtoList);
     }

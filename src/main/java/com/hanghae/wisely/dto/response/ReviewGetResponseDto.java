@@ -15,6 +15,5 @@ public class ReviewGetResponseDto {
     private String name;
     private String createdAt;
     private String age;
-    private boolean ismine;
-
+    private Long commentRate;
 }

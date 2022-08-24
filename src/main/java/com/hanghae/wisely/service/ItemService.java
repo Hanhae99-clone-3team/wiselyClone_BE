@@ -7,7 +7,6 @@ import com.hanghae.wisely.dto.request.ItemRequestDto;
 import com.hanghae.wisely.dto.response.ItemDetailResponseDto;
 import com.hanghae.wisely.dto.response.ItemResponseDto;
 import com.hanghae.wisely.repository.ItemRepository;
-import com.hanghae.wisely.repository.ReviewRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,7 +19,6 @@ import java.util.List;
 public class ItemService {
 
     private final ItemRepository itemRepository;
-    private final ReviewRepository reviewRepository;
 
     // Item 등록
     public void createItem(ItemRequestDto requestDto) {

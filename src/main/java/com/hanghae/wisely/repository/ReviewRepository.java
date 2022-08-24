@@ -1,12 +1,12 @@
 package com.hanghae.wisely.repository;
 
 import com.hanghae.wisely.domain.Review;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface ReviewRepository extends JpaRepository<Review, Long> {
-    List<Review> findAllByItem_Id(Long itemId);
+    Page<Review> findAllByItem_Id(Long itemId, Pageable pageable);
 
     Review findReviewByItem_IdAndId(Long itemId, Long commentId);
 }
