@@ -2,6 +2,7 @@ package com.hanghae.wisely.service;
 
 import com.hanghae.wisely.domain.Cart;
 import com.hanghae.wisely.domain.CartItem;
+import com.hanghae.wisely.domain.Member;
 import com.hanghae.wisely.dto.response.BasicResponseDto;
 import com.hanghae.wisely.dto.response.CartItemResponseDto;
 import com.hanghae.wisely.dto.response.CartResponseDto;
@@ -9,6 +10,7 @@ import com.hanghae.wisely.repository.CartItemRepository;
 import com.hanghae.wisely.repository.CartRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -28,13 +30,11 @@ public class CartService {
 
     // 장바구니 담기
     @Transactional
-    public BasicResponseDto addCart(Long itemId, HttpServletRequest request) {
-        // 멤버 체크 필요
-
+    public BasicResponseDto addCart(Long itemId, Member member) {
         // 카트에 결재대기 항목있는지 체크
-        Cart cart = cartRepository.findByIsPaidFalse();
+        Cart cart = cartRepository.findByIsPaidFalse(member);
         if (null == cart){
-            return createCart(itemId);
+            return createCart(itemId, member);
         }
         // 해당 Cart에 item 추가
         return cartItemService.addCartItem(itemId,cart);
@@ -42,9 +42,10 @@ public class CartService {
 
     // 장바구니 생성
     @Transactional
-    public BasicResponseDto createCart(Long itemId) {
+    public BasicResponseDto createCart(Long itemId, Member member) {
         Cart cart = Cart.builder()
                 .idPaid(false)
+                .member(member)
                 .build();
         cartRepository.save(cart);
 
@@ -54,13 +55,11 @@ public class CartService {
 
     // 장바구니 전체 조회
     @Transactional
-    public ResponseEntity<?> getCart() {
-        // 멤버 체크 필요
-
+    public ResponseEntity<?> getCart(Member member) {
         // 카트에 결재되지 않은 항목이 있는지 체크
-        Cart cart = cartRepository.findByIsPaidFalse();
+        Cart cart = cartRepository.findByIsPaidFalse(member);
         if (null == cart){
-            return ResponseEntity.noContent().build();
+            return new ResponseEntity(new BasicResponseDto("장바구니가 비어있습니다",false), HttpStatus.NOT_FOUND);
         }
 
         // 장바구니 안에 있는 item들 조회
@@ -87,11 +86,11 @@ public class CartService {
 
     // 장바구니 상품 삭제 (구현 중)
     @Transactional
-    public BasicResponseDto deleteCart(Long carItemid, HttpServletRequest request) {
+    public BasicResponseDto deleteCart(Long carItemid, Member member) {
         // 멤버 체크 필요
 
         // 카트에 결재대기 항목있는지 체크
-        Cart cart = cartRepository.findByIsPaidFalse();
+        Cart cart = cartRepository.findByIsPaidFalse(member);
         if (null == cart){
             return new BasicResponseDto("장바구니가 비어있습니다",false);
         }
@@ -106,7 +105,7 @@ public class CartService {
 
     // 장바구니 결제
     @Transactional
-    public BasicResponseDto paidCart(Long id, HttpServletRequest request) {
+    public BasicResponseDto paidCart(Long id, Member member) {
         // 멤버 체크 필요
 
         // 카트에 결재대기 항목있는지 체크
@@ -122,7 +121,7 @@ public class CartService {
 
     // 장바구니 상품 수정(미구현)
     @Transactional
-    public BasicResponseDto updateCart(Long id, HttpServletRequest request) {
+    public BasicResponseDto updateCart(Long id, Member member) {
         return new BasicResponseDto("장바구니가 업데이트되었습니다.",true);
     }
 }
