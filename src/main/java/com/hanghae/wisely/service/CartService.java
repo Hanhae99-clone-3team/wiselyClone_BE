@@ -32,7 +32,7 @@ public class CartService {
     @Transactional
     public BasicResponseDto addCart(Long itemId, Member member) {
         // 카트에 결재대기 항목있는지 체크
-        Cart cart = cartRepository.findByIsPaidFalse(member);
+        Cart cart = cartRepository.findByPaidIsFalseAndMember(member);
         if (null == cart){
             return createCart(itemId, member);
         }
@@ -44,7 +44,7 @@ public class CartService {
     @Transactional
     public BasicResponseDto createCart(Long itemId, Member member) {
         Cart cart = Cart.builder()
-                .idPaid(false)
+                .paid(false)
                 .member(member)
                 .build();
         cartRepository.save(cart);
@@ -57,7 +57,7 @@ public class CartService {
     @Transactional
     public ResponseEntity<?> getCart(Member member) {
         // 카트에 결재되지 않은 항목이 있는지 체크
-        Cart cart = cartRepository.findByIsPaidFalse(member);
+        Cart cart = cartRepository.findByPaidIsFalseAndMember(member);
         if (null == cart){
             return new ResponseEntity(new BasicResponseDto("장바구니가 비어있습니다",false), HttpStatus.NOT_FOUND);
         }
@@ -89,7 +89,7 @@ public class CartService {
     public BasicResponseDto deleteCart(Long carItemid, Member member) {
 
         // 카트에 결재대기 항목있는지 체크
-        Cart cart = cartRepository.findByIsPaidFalse(member);
+        Cart cart = cartRepository.findByPaidIsFalseAndMember(member);
         if (null == cart){
             return new BasicResponseDto("장바구니가 비어있습니다",false);
         }

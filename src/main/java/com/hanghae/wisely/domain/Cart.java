@@ -29,10 +29,10 @@ public class Cart extends Timestamped{
     // 결제가 완료된 장바구니 내용이면 true
     // 결제하기 전인 장바구니 내용이면 false
     @Column
-    private boolean idPaid;
+    private boolean paid;
 
     // 결제 완료 시 호출
     public void update() {
-        this.idPaid = true;
+        this.paid = true;
     }
 }
