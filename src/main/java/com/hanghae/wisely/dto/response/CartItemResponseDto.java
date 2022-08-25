@@ -13,5 +13,6 @@ public class CartItemResponseDto {
     private Long itemCount;
     private String itemName;
     private String itemDesc;
+    private String itemImgUrl;
     private Long itemPrice;
 }

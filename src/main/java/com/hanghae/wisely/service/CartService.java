@@ -73,6 +73,7 @@ public class CartService {
                             .itemCount(cartItem.getItemCount())
                             .itemName(cartItem.getItem().getItemName())
                             .itemDesc(cartItem.getItem().getItemDesc())
+                            .itemImgUrl(cartItem.getItem().getItemImgUrl())
                             .itemPrice(cartItem.getItem().getItemPrice())
                             .build()
             );
