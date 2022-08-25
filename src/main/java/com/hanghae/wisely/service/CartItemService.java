@@ -40,7 +40,7 @@ public class CartItemService {
 
     @Transactional
     public BasicResponseDto addCartItem(Long itemId, Cart cart) {
-        CartItem cartItem = cartItemRepository.findByItem_Id(itemId);
+        CartItem cartItem = cartItemRepository.findByItem_IdAndCart(itemId, cart);
         if (null == cartItem) {
             return createCartItem(itemId, cart);
         } else {
