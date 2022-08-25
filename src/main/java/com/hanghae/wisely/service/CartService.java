@@ -87,7 +87,6 @@ public class CartService {
     // 장바구니 상품 삭제 (구현 중)
     @Transactional
     public BasicResponseDto deleteCart(Long carItemid, Member member) {
-        // 멤버 체크 필요
 
         // 카트에 결재대기 항목있는지 체크
         Cart cart = cartRepository.findByIsPaidFalse(member);
@@ -106,13 +105,17 @@ public class CartService {
     // 장바구니 결제
     @Transactional
     public BasicResponseDto paidCart(Long id, Member member) {
-        // 멤버 체크 필요
-
-        // 카트에 결재대기 항목있는지 체크
+        // 입력받은 장바구니 불러오기
         Optional<Cart> optionalCart = cartRepository.findById(id);
+        // 해당 장바구니가 비어있는지 확인
         Cart cart = optionalCart.orElse(null);
         if (null == cart){
             return new BasicResponseDto("Cart가 비어있습니다",false);
+        }
+
+        // 해당 장바구니가 멤버의 것인지 확인
+        if (!cart.getMember().getId().equals(member.getId())) {
+            throw new IllegalArgumentException("로그인한 멤버의 장바구니가 아닙니다.");
         }
 
         cart.update();
