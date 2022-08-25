@@ -19,6 +19,7 @@ import java.util.List;
 public class ItemService {
 
     private final ItemRepository itemRepository;
+    private double avgRate =0;
 
     // Item 등록
     public void createItem(ItemRequestDto requestDto) {
@@ -35,31 +36,12 @@ public class ItemService {
     }
 
     // Item 전체 조회
+    @Transactional(readOnly = true)
     public List<ItemResponseDto> getItem() {
 
+        // Repository에서 모든 Item 조회
         List<Item> itemList = itemRepository.findAll();
-        List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
-
-        for (Item item : itemList) {
-            // double avgRate 선언
-            double avgRate = 0;
-            // 반복문으로 review 에서 rate값을 꺼내 avgRate 더함
-            for (Review review : item.getReviewList()) {
-                avgRate = (avgRate + review.getRate());
-            }
-            itemResponseDtoList.add(
-                    ItemResponseDto.builder()
-                            .itemId(item.getId())
-                            .itemName(item.getItemName())
-                            .itemDesc(item.getItemDesc())
-                            // avgRate를 review 개수로 나눔
-                            .itemRate((avgRate/(item.getReviewList().stream().count())))
-                            .itemReviewCount(item.getReviewList().stream().count())
-                            .itemPrice(item.getItemPrice())
-                            .itemImgUrl(item.getItemImgUrl())
-                            .build()
-            );
-        }
+        List<ItemResponseDto> itemResponseDtoList = ConvertToSimple(itemList);
         return itemResponseDtoList;
     }
 
@@ -69,30 +51,9 @@ public class ItemService {
 
         // String 타입의 category 를 Enum 타입으로 조회해서 repository 에 파라미터로 넘김
         Category categoryByEnum = Category.valueOf(category);
-
         List<Item> itemList = itemRepository.findByCategory(categoryByEnum);
-        List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
 
-        for (Item item : itemList) {
-            // double avgRate 선언
-            double avgRate = 0;
-            // 반복문으로 review 에서 rate값을 꺼내 avgRate 더함
-            for (Review review : item.getReviewList()) {
-                avgRate = (avgRate + review.getRate());
-            }
-            itemResponseDtoList.add(
-                    ItemResponseDto.builder()
-                            .itemId(item.getId())
-                            .itemName(item.getItemName())
-                            .itemDesc(item.getItemDesc())
-                            // avgRate를 review 개수로 나눔
-                            .itemRate((avgRate/(item.getReviewList().stream().count())))
-                            .itemReviewCount(item.getReviewList().stream().count())
-                            .itemPrice(item.getItemPrice())
-                            .itemImgUrl(item.getItemImgUrl())
-                            .build()
-            );
-        }
+        List<ItemResponseDto> itemResponseDtoList = ConvertToSimple(itemList);
         return itemResponseDtoList;
     }
 
@@ -101,7 +62,7 @@ public class ItemService {
         Item item = itemRepository.findById(itemId).orElseThrow(() -> {
             throw new IllegalArgumentException("해당 아이템이 존재하지 않습니다. itemId: " + itemId);
         });
-        double avgRate = 0;
+        avgRate = 0;
         for (Review review : item.getReviewList()){
             avgRate = (avgRate + review.getRate());
         }
@@ -119,6 +80,32 @@ public class ItemService {
                 .build();
 
         return itemDetailResponseDto;
+    }
+
+    // 중복 제거
+    private List<ItemResponseDto> ConvertToSimple(List<Item> itemList) {
+        List<ItemResponseDto> itemResponseDtoList = new ArrayList<>();
+        for (Item item : itemList) {
+            // double avgRate 선언
+            avgRate = 0;
+            // 반복문으로 review 에서 rate값을 꺼내 avgRate 더함
+            for (Review review : item.getReviewList()) {
+                avgRate = (avgRate + review.getRate());
+            }
+            itemResponseDtoList.add(
+                    ItemResponseDto.builder()
+                            .itemId(item.getId())
+                            .itemName(item.getItemName())
+                            .itemDesc(item.getItemDesc())
+                            // avgRate를 review 개수로 나눔, Math.round를 이용해서 소수점 첫 번째 자리까지 표시
+                            .itemRate(Math.round((avgRate/(item.getReviewList().stream().count())) *10)/10.0)
+                            .itemReviewCount(item.getReviewList().stream().count())
+                            .itemPrice(item.getItemPrice())
+                            .itemImgUrl(item.getItemImgUrl())
+                            .build()
+            );
+        }
+        return itemResponseDtoList;
     }
 
 }

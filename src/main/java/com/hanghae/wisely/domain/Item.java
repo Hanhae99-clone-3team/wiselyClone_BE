@@ -22,13 +22,13 @@ public class Item {
     @Column(name = "itemname", nullable = false, unique = true)
     private String itemName;
 
-    @Column(name = "itemdesc",nullable = false, unique = true)
+    @Column(name = "itemdesc",nullable = false)
     private String itemDesc;
 
     @Column(name = "itemprice",nullable = false)
     private Long itemPrice;
 
-    @Column(name = "itemimgurl",nullable = false)
+    @Column(name = "itemimgurl",nullable = false, unique = true)
     private String itemImgUrl;
 
     @Column(name = "itemdetailimg1",nullable = false)
@@ -39,7 +39,7 @@ public class Item {
 
     // Category Enum (면도용품, 스킨케어, 두피케어, 영양제, 덴탈케어, 바디케어)
     @Enumerated(EnumType.STRING)
-    @Column(name = "category")
+    @Column(name = "category", nullable = false)
     private Category category;
 
     @OneToMany(mappedBy = "item", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)

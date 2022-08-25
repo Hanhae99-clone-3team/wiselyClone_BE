@@ -30,7 +30,7 @@ public class ReviewService {
     private final ItemRepository itemRepository;
 
     // Review 생성
-    @Transactional //TODO : member 추가
+    @Transactional
     public ReviewResponseDto createReview(Long itemId, ReviewRequestDto requestDto, Member member) {
 
         // Item 찾아오기
@@ -181,8 +181,6 @@ public class ReviewService {
 
         // 다시 String 으로 형병환 한다.
         String age = String.valueOf(simpleAge);
-
-
 
         return age;
     }
